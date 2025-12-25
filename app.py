@@ -1,5 +1,4 @@
 import streamlit as st
-import face_recognition
 import cv2
 import pandas as pd
 import numpy as np
@@ -8,12 +7,8 @@ import os
 
 st.title("حضور و غیاب با عکس کلاس")
 
-# بارگذاری دانش‌آموزان و عکس‌های آنها
+# بارگذاری دانش‌آموزان از فولدر students
 students = [f.split(".")[0] for f in os.listdir("students")]
-known_images = [face_recognition.load_image_file(f"students/{f}") for f in os.listdir("students")]
-known_encodings = [face_recognition.face_encodings(img)[0] for img in known_images]
-
-# وضعیت اولیه دانش‌آموزان
 status = {name: "غایب" for name in students}
 
 # آپلود عکس کلاس
@@ -22,18 +17,23 @@ uploaded = st.file_uploader("عکس کلاس را آپلود کن", type=["jpg",
 if uploaded:
     image = Image.open(uploaded)
     st.image(image, caption="عکس کلاس")
-    img = np.array(image)
+    img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-    # شناسایی چهره‌ها در عکس کلاس
-    face_locations = face_recognition.face_locations(img)
-    face_encodings = face_recognition.face_encodings(img, face_locations)
+    # ---------- تشخیص چهره با OpenCV ----------
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
 
-    # مقایسه با دانش‌آموزان
-    for face_encoding in face_encodings:
-        matches = face_recognition.compare_faces(known_encodings, face_encoding)
-        if True in matches:
-            match_index = matches.index(True)
-            status[students[match_index]] = "حاضر"
+    # علامت گذاری چهره‌ها روی تصویر
+    for (x, y, w, h) in faces:
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+    st.image(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), caption="چهره‌های شناسایی شده")
+
+    # بروزرسانی وضعیت دانش‌آموزان
+    for i, (name) in enumerate(students):
+        if i < len(faces):
+            status[name] = "حاضر"
 
     # نمایش دانش‌آموزان حاضر
     present_students = [name for name, stt in status.items() if stt == "حاضر"]
