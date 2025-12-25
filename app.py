@@ -8,6 +8,7 @@ import os
 
 st.title("حضور و غیاب با عکس کلاس")
 
+# بارگذاری اسامی دانش‌آموزان از فولدر
 students = [f.split(".")[0] for f in os.listdir("students")]
 status = {name: "غایب" for name in students}
 
@@ -18,12 +19,15 @@ if uploaded:
     st.image(image, caption="عکس کلاس")
     img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-    # ---------- API جدید 0.10 ----------
-    mp_face = mp.solutions.face_detection.FaceDetection(
+    # ---------- MediaPipe Face Detection ----------
+    mp_face_detection = mp.solutions.face_detection
+    face_detection = mp_face_detection.FaceDetection(
         model_selection=0,
-        min_detection_confidence=0.5)
-    results = mp_face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    # ------------------------------------
+        min_detection_confidence=0.5
+    )
+
+    results = face_detection.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    # -----------------------------------------------
 
     if results.detections:
         for i, det in enumerate(results.detections):
