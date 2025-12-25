@@ -21,18 +21,18 @@ if uploaded:
 
     img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-    # تشخیص چهره با MediaPipe
-    with mp.solutions.face_detection.FaceDetection(
+    # ایجاد شیء FaceDetection
+    face_detection = mp.solutions.face_detection.FaceDetection(
         model_selection=0,
         min_detection_confidence=0.5
-    ) as face_detection:
+    )
 
-        results = face_detection.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+    results = face_detection.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
-        if results.detections:
-            for i, det in enumerate(results.detections):
-                if i < len(students):
-                    status[students[i]] = "حاضر"
+    if results.detections:
+        for i, det in enumerate(results.detections):
+            if i < len(students):
+                status[students[i]] = "حاضر"
 
     # نمایش اسامی حاضرها بالای عکس
     present_students = [name for name, stat in status.items() if stat == "حاضر"]
