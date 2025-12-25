@@ -2,8 +2,10 @@ import streamlit as st
 import cv2
 import mediapipe as mp
 import pandas as pd
+import numpy as np
 from PIL import Image
 import os
+
 
 st.title("حضور و غیاب با عکس کلاس")
 
