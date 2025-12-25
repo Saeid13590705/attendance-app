@@ -1,4 +1,5 @@
 import streamlit as st
+import mediapipe as mp
 import cv2
 import pandas as pd
 import numpy as np
@@ -24,11 +25,14 @@ if uploaded:
     img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
     # ---------- MediaPipe Face Detection ----------
+    # MediaPipe Face Detection
+    mp_face_detection = mp.solutions.face_detection
     face_detection = mp_face_detection.FaceDetection(
-        model_selection=0,
-        min_detection_confidence=0.5
-    )
+    model_selection=0,
+    min_detection_confidence=0.5
+)
     results = face_detection.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+
     # -----------------------------------------------
 
     # به‌روزرسانی وضعیت دانش‌آموزان
