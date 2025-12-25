@@ -13,7 +13,7 @@ students = [f.split(".")[0] for f in os.listdir("students")]
 status = {name: "غایب" for name in students}
 
 # آپلود عکس کلاس
-uploaded = st.file_uploader("عکس کلاس را آپلود کن", type=["jpg", "png"])
+uploaded = st.file_uploader("عکس کلاس را آپلود کن", type=["jpg","png"])
 
 if uploaded:
     image = Image.open(uploaded)
@@ -21,8 +21,9 @@ if uploaded:
 
     img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-    # ایجاد شیء FaceDetection
-    face_detection = mp.solutions.face_detection.FaceDetection(
+    # MediaPipe Face Detection
+    mp_face = mp.solutions.face_detection
+    face_detection = mp_face.FaceDetection(
         model_selection=0,
         min_detection_confidence=0.5
     )
