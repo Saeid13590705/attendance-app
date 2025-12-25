@@ -22,7 +22,10 @@ if uploaded:
 
     img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-    mp_face = mp.solutions.face_detection.FaceDetection()
+mp_face = mp.solutions.face_detection.FaceDetection(
+    model_selection=0,
+    min_detection_confidence=0.5
+)
 
     results = mp_face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
 
