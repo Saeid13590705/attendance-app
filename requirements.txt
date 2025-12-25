@@ -1,6 +1,6 @@
 streamlit
 opencv-python-headless
-mediapipe>=0.10.30
+mediapipe>=0.10.0
 pillow
 pandas
 numpy
